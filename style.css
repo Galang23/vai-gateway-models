@@ -1,0 +1,354 @@
+:root {
+    --primary: #0070f3;
+    --primary-hover: #0051a8;
+    --background: #ffffff;
+    --surface: #f7f7f7;
+    --border: #e0e0e0;
+    --text: #1a1a1a;
+    --text-light: #666;
+    --success: #0a0;
+    --danger: #d00;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background);
+    color: var(--text);
+    font-size: 13px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 16px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+#selection-stats {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.cache-status {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface);
+}
+
+.cache-status.fresh { color: var(--success); }
+.cache-status.stale { color: orange; }
+
+/* Controls */
+.controls {
+    background: var(--surface);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.export-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-light);
+    text-transform: uppercase;
+}
+
+input[type="text"], select {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    min-width: 160px;
+    background: white;
+    font-size: 13px;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Button */
+.btn {
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: white;
+    font-weight: 500;
+    font-size: 12px;
+    transition: all 0.15s ease;
+}
+
+.btn:hover {
+    background: #eee;
+    border-color: #bbb;
+}
+
+.btn.primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.btn.primary:hover {
+    background: var(--primary-hover);
+}
+
+/* Multiselect Dropdown */
+.relative {
+    position: relative;
+}
+
+.multiselect-dropdown {
+    min-width: 180px;
+}
+
+.select-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: white;
+    font-size: 13px;
+}
+
+.select-box .arrow {
+    font-size: 10px;
+    color: #888;
+}
+
+.checkboxes {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid var(--border);
+    border-top: none;
+    background-color: white;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 0 0 5px 5px;
+}
+
+.checkboxes.expanded {
+    display: block;
+}
+
+.checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-weight: normal;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.checkboxes label:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.checkboxes input[type="checkbox"] {
+    margin: 0;
+}
+
+/* Table */
+.table-container {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1400px;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background: #fafafa;
+    z-index: 10;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-light);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+thead th:hover {
+    background: #f0f0f0;
+}
+
+thead th.no-sort {
+    cursor: default;
+}
+
+thead th.no-sort:hover {
+    background: #fafafa;
+}
+
+.sort-indicator {
+    margin-left: 4px;
+    font-size: 10px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+td {
+    padding: 10px 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+
+td.col-select, th.col-select {
+    width: 40px;
+    text-align: center;
+}
+
+td.col-tags {
+    white-space: normal;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+td.col-number {
+    text-align: right;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+}
+
+td.col-price {
+    text-align: right;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+    color: #333;
+}
+
+td.col-price.empty {
+    color: #bbb;
+}
+
+.tag-badge {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #1a73e8;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    margin-right: 3px;
+    margin-bottom: 2px;
+}
+
+/* Loading & Error */
+.loading, .error {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: var(--text-light);
+}
+
+.error {
+    color: var(--danger);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Footer */
+footer {
+    padding: 10px 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-row, .export-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    input[type="text"], select, .select-box, .multiselect-dropdown {
+        min-width: 100%;
+    }
+}

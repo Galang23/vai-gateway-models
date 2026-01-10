@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Models Pricing Explorer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Models Pricing Explorer</h1>
+            <div class="header-actions">
+                <span id="selection-stats">0 selected</span>
+                <span id="cache-status" class="cache-status"></span>
+            </div>
+        </header>
+
+        <section class="controls">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" placeholder="Filter by Name, ID...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="provider-filter">Developer</label>
+                    <select id="provider-filter">
+                        <option value="">All Developers</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="family-filter">Model Family</label>
+                    <select id="family-filter">
+                        <option value="">All Families</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="type-filter">Type</label>
+                    <select id="type-filter">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+
+                <div class="filter-group relative">
+                    <label>Capabilities</label>
+                    <div class="multiselect-dropdown" id="tags-dropdown-container">
+                        <div class="select-box" id="tags-select-box">
+                            <span id="tags-selected-text">Select Capabilities...</span>
+                            <span class="arrow">&#9662;</span>
+                        </div>
+                        <div class="checkboxes" id="tags-checkboxes"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-row">
+                <button id="btn-csv" class="btn">Export CSV</button>
+                <button id="btn-json" class="btn">Export JSON</button>
+                <button id="btn-html" class="btn">Export HTML</button>
+                <button id="btn-refresh" class="btn primary">Refresh Data</button>
+            </div>
+        </section>
+
+        <div class="table-container">
+            <table id="models-table">
+                <thead>
+                    <tr id="table-header-row"></tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+        
+        <div id="loading" class="loading">Loading models...</div>
+        <div id="error" class="error hidden"></div>
+        <footer>
+            <span id="model-count">0 models</span>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

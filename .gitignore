@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local
+*.log
