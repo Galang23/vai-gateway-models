@@ -21,7 +21,7 @@ A lightweight, client-side web application for browsing and comparing AI model p
 
 ## Demo
 
-Visit the live demo: [GitHub Pages URL]
+Visit the live demo: [GitHub Pages](https://galang23.github.io/vai-gateway-models/).
 
 ## Usage
 
