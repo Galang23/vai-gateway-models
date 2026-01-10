@@ -67,6 +67,28 @@ h1 {
 .cache-status.fresh { color: var(--success); }
 .cache-status.stale { color: orange; }
 
+/* Mobile Filter Toggle Button */
+.filter-toggle {
+    display: none; /* Hidden on desktop */
+    width: 100%;
+    margin-bottom: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    font-size: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.filter-toggle .toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.filter-toggle.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
 /* Controls */
 .controls {
     background: var(--surface);
@@ -278,9 +300,42 @@ td {
     max-width: 250px;
 }
 
+/* Sticky Columns: Select */
 td.col-select, th.col-select {
     width: 40px;
     text-align: center;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background-color: white;
+}
+
+thead th.col-select {
+    background-color: #fafafa;
+    z-index: 15; /* Higher than normal header (10) and sticky body (5) */
+}
+
+/* Sticky Columns: Model Name */
+td.col-name, th.col-name {
+    position: sticky;
+    left: 40px;
+    z-index: 5;
+    background-color: white;
+    border-right: 1px solid var(--border);
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+    min-width: 180px;
+    max-width: 220px;
+}
+
+thead th.col-name {
+    background-color: #fafafa;
+    z-index: 15;
+}
+
+/* Ensure hover state works on sticky columns */
+tbody tr:hover td.col-select,
+tbody tr:hover td.col-name {
+    background-color: #f9f9f9;
 }
 
 td.col-tags {
@@ -341,8 +396,31 @@ footer {
     color: var(--text-light);
 }
 
-/* Responsive */
+/* ===== Responsive / Mobile ===== */
 @media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    /* Show the toggle button */
+    .filter-toggle {
+        display: flex;
+    }
+
+    /* Hide controls by default on mobile */
+    .controls {
+        display: none;
+        margin-bottom: 12px;
+    }
+
+    .controls.expanded {
+        display: flex;
+    }
+
     .filter-row, .export-row {
         flex-direction: column;
         align-items: stretch;
@@ -350,5 +428,37 @@ footer {
     
     input[type="text"], select, .select-box, .multiselect-dropdown {
         min-width: 100%;
+    }
+
+    .export-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .export-row .btn {
+        width: 100%;
+    }
+
+    /* Sticky name column - narrower on mobile */
+    td.col-name, th.col-name {
+        min-width: 140px;
+        max-width: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 16px;
+    }
+
+    td.col-name, th.col-name {
+        min-width: 120px;
+        max-width: 140px;
+        left: 32px; /* Smaller checkbox column */
+    }
+
+    td.col-select, th.col-select {
+        width: 32px;
     }
 }

@@ -17,7 +17,7 @@
     // --- Column Definitions ---
     const columns = [
         { key: 'select', label: '', sortable: false, className: 'col-select' },
-        { key: 'name', label: 'Model Name', sortable: true },
+        { key: 'name', label: 'Model Name', sortable: true, className: 'col-name' },
         { key: 'type', label: 'Type', sortable: true },
         { key: 'tags', label: 'Capabilities', sortable: false, className: 'col-tags' },
         { key: 'context_window', label: 'Context', sortable: true, type: 'number', className: 'col-number' },
@@ -53,6 +53,8 @@
         btnJson: $('#btn-json'),
         btnHtml: $('#btn-html'),
         btnRefresh: $('#btn-refresh'),
+        filterToggle: $('#filter-toggle'),
+        controlsSection: $('#controls-section'),
     };
 
     // --- Utilities ---
@@ -93,6 +95,16 @@
             return parts[0];
         }
         return name;
+    }
+
+    // --- Mobile Filter Toggle ---
+    function toggleFilters() {
+        const isCollapsed = dom.filterToggle.classList.toggle('collapsed');
+        if (isCollapsed) {
+            dom.controlsSection.classList.remove('expanded');
+        } else {
+            dom.controlsSection.classList.add('expanded');
+        }
     }
 
     // --- LocalStorage Cache ---
@@ -573,6 +585,9 @@ tr:nth-child(even){background:#fafafa}.tag{display:inline-block;background:#e8f0
         dom.typeFilter.addEventListener('change', applyFilters);
         dom.tagsSelectBox.addEventListener('click', toggleTagsDropdown);
 
+        // Mobile filter toggle
+        dom.filterToggle.addEventListener('click', toggleFilters);
+
         // Close tags dropdown when clicking outside
         document.addEventListener('click', (e) => {
             const container = $('#tags-dropdown-container');
@@ -589,6 +604,9 @@ tr:nth-child(even){background:#fafafa}.tag{display:inline-block;background:#e8f0
 
     // --- Init ---
     function init() {
+        // Set initial collapsed state for mobile
+        dom.filterToggle.classList.add('collapsed');
+        
         renderHeaders();
         bindEvents();
         fetchData();
