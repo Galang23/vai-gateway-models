@@ -4,20 +4,32 @@ A lightweight, client-side web application for browsing and comparing AI model p
 
 ## Features
 
-- **Live Data**: Fetches model data directly from the Vercel AI Gateway API
+- **Live + Local Data Source**:
+  - Fetches model data directly from the Vercel AI Gateway API
+  - Falls back to local `pricing.json` when API is unavailable
 - **LocalStorage Caching**: Instant page loads with stale-while-revalidate caching strategy
-- **Sortable Columns**: Click any column header to sort ascending/descending
-- **Advanced Filtering**:
+- **Shareable Comparison Mode**:
+  - Select 2+ models using row checkboxes and compare instantly (no reload)
+  - Share comparison via URL query string (e.g. `?compare=modelA,modelB`)
+  - Works with browser back/forward navigation
+- **Advanced Filtering (Multi-select)**:
   - Text search (Name, ID)
-  - Developer filter
-  - Model Family filter (auto-extracted from model names)
-  - Type filter (language, image, etc.)
+  - Developer multi-select (checkbox dropdown)
+  - Model Family multi-select (auto-extracted)
+  - Type multi-select (language, image, video, etc.)
   - Capabilities multi-select (tool-use, vision, reasoning, etc.)
+- **Adjustable Table Columns**:
+  - Drag column edge to resize
+  - Double-click column edge to auto-fit
+  - Reset all custom widths with one click
+- **Advanced Filtering**:
 - **Pricing Display**:
   - Language models: $/1M tokens (input, output, cache read/write)
   - Image models: $/image
+  - Video models: $/sec
   - Web search: $/1k requests
-- **Export Options**: Download filtered/selected data as CSV, JSON, or HTML
+  - Tier/variant indicators and pricing details when available
+- **Export Options**: Download filtered/selected data as CSV, JSON, or HTML (includes normalized and raw pricing data)
 
 ## Demo
 
@@ -46,13 +58,17 @@ Simply open the deployed GitHub Pages site and start exploring AI model pricing.
 
 ## Data Source
 
-All pricing data is fetched from the [Vercel AI Gateway API](https://ai-gateway.vercel.sh/v1/models).
+Primary data source: [Vercel AI Gateway API](https://ai-gateway.vercel.sh/v1/models).
+
+Fallback data source: local `pricing.json`.
 
 The API provides:
 - Model metadata (name, ID, developer, type)
 - Context window and max output tokens
-- Pricing information (input, output, cache, image generation, web search)
+- Pricing information (input, output, cache, image generation, video generation, web search, and tier/variant structures)
 - Capabilities/tags (tool-use, vision, reasoning, etc.)
+
+The app normalizes differing pricing schemas into a consistent table view while preserving raw pricing for export.
 
 ## Tech Stack
 
@@ -67,7 +83,8 @@ The API provides:
 |------|-------------|
 | `index.html` | Main application page |
 | `style.css` | All styling (responsive, dark-mode ready structure) |
-| `app.js` | Application logic (fetch, filter, sort, export) |
+| `app.js` | Application logic (fetch, normalize, filter, compare, sort, resize, export) |
+| `pricing.json` | Local fallback dataset / new schema sample |
 | `analyze_pricing.py` | Python utility script for analyzing API data |
 
 ## License
