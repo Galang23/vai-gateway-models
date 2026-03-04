@@ -40,30 +40,42 @@
 
         <section class="controls" id="controls-section">
             <div class="filter-row">
-                <div class="filter-group">
+                <div class="filter-group relative">
                     <label for="search">Search</label>
                     <input type="text" id="search" placeholder="Filter by Name, ID...">
                 </div>
                 
-                <div class="filter-group">
-                    <label for="provider-filter">Developer</label>
-                    <select id="provider-filter">
-                        <option value="">All Developers</option>
-                    </select>
+                <div class="filter-group relative">
+                    <label>Developer</label>
+                    <div class="multiselect-dropdown" id="provider-dropdown-container">
+                        <div class="select-box" id="provider-select-box">
+                            <span id="provider-selected-text">All Developers</span>
+                            <span class="arrow">&#9662;</span>
+                        </div>
+                        <div class="checkboxes" id="provider-checkboxes"></div>
+                    </div>
+                </div>
+
+                <div class="filter-group relative">
+                    <label>Model Family</label>
+                    <div class="multiselect-dropdown" id="family-dropdown-container">
+                        <div class="select-box" id="family-select-box">
+                            <span id="family-selected-text">All Families</span>
+                            <span class="arrow">&#9662;</span>
+                        </div>
+                        <div class="checkboxes" id="family-checkboxes"></div>
+                    </div>
                 </div>
 
                 <div class="filter-group">
-                    <label for="family-filter">Model Family</label>
-                    <select id="family-filter">
-                        <option value="">All Families</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="type-filter">Type</label>
-                    <select id="type-filter">
-                        <option value="">All Types</option>
-                    </select>
+                    <label>Type</label>
+                    <div class="multiselect-dropdown" id="type-dropdown-container">
+                        <div class="select-box" id="type-select-box">
+                            <span id="type-selected-text">All Types</span>
+                            <span class="arrow">&#9662;</span>
+                        </div>
+                        <div class="checkboxes" id="type-checkboxes"></div>
+                    </div>
                 </div>
 
                 <div class="filter-group relative">
@@ -82,9 +94,17 @@
                 <button id="btn-csv" class="btn">Export CSV</button>
                 <button id="btn-json" class="btn">Export JSON</button>
                 <button id="btn-html" class="btn">Export HTML</button>
+                <button id="btn-reset-widths" class="btn">Reset Column Widths</button>
                 <button id="btn-refresh" class="btn primary">Refresh Data</button>
             </div>
+
         </section>
+
+        <div id="compare-bar" class="compare-inline hidden" aria-live="polite">
+            <span id="compare-info">Select 2 or more models to compare</span>
+            <button id="btn-compare" class="btn primary" disabled>Compare Selected</button>
+            <button id="btn-exit-compare" class="btn hidden">Exit Compare</button>
+        </div>
 
         <div class="table-container">
             <table id="models-table">

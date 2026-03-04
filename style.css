@@ -111,6 +111,21 @@ h1 {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+.compare-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    min-height: 34px;
+}
+
+#compare-info {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 600;
 }
 
 .filter-group {
@@ -157,6 +172,11 @@ input[type="text"]:focus, select:focus {
     border-color: #bbb;
 }
 
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 .btn.primary {
     background: var(--primary);
     color: white;
@@ -174,6 +194,7 @@ input[type="text"]:focus, select:focus {
 
 .multiselect-dropdown {
     min-width: 180px;
+    position: relative;
 }
 
 .select-box {
@@ -264,6 +285,26 @@ thead th {
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
+    padding-right: 18px;
+}
+
+.col-resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 2;
+}
+
+.col-resize-handle:hover {
+    background: rgba(0, 112, 243, 0.12);
+}
+
+body.is-resizing-columns {
+    cursor: col-resize;
+    user-select: none;
 }
 
 thead th:hover {
@@ -355,6 +396,35 @@ td.col-price {
     font-family: "SF Mono", "Menlo", monospace;
     font-size: 12px;
     color: #333;
+    white-space: normal;
+    overflow: visible;
+}
+
+.price-main {
+    display: inline;
+}
+
+.price-meta {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    color: #315f9a;
+    background: #e8f0fe;
+}
+
+.price-detail {
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 1.35;
+    color: #5d6b7d;
+    text-align: left;
+    white-space: normal;
+    word-break: break-word;
 }
 
 td.col-price.empty {
@@ -437,6 +507,22 @@ footer {
     }
 
     .export-row .btn {
+        width: 100%;
+    }
+
+    .compare-inline {
+        margin-left: 0;
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 6px;
+        min-height: auto;
+    }
+
+    .compare-inline #btn-compare,
+    .compare-inline #btn-exit-compare {
         width: 100%;
     }
 

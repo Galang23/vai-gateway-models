@@ -2,7 +2,7 @@ import json
 import os
 
 file_path = (
-    "/home/adhi/.local/share/opencode/tool-output/tool_ba7e7a629001u0YUc6A6uwmxub"
+    "./pricing.json"
 )
 
 try:
