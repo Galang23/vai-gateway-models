@@ -1,88 +1,146 @@
+import argparse
 import json
-import os
+from collections import Counter
 
-file_path = (
-    "./pricing.json"
-)
 
-try:
-    with open(file_path, "r") as f:
-        content = f.read()
-        # The file content seems to start with "00001| ", we might need to clean it if it was a raw dump from a tool,
-        # but the `read` output showed it just as text. However, looking at the `read` output again:
-        # "00001| {"object":"list","data":..."
-        # It seems the `read` tool adds line numbers "00001| ".
-        # But wait, the `read` tool *output* in the conversation shows "00001| ", but the *actual file* might not have it if it was just read by the tool.
-        # Actually, the previous tool output was `read` tool *displaying* the file content.
-        # The prompt says: "This file contains a JSON response."
-        # Usually tool output files are raw. The "00001| " is likely an artifact of the `read` tool's presentation in the chat, NOT the file content itself.
-        # I will assume the file contains valid JSON.
+def load_models(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        payload = json.load(f)
 
-        # If the read output actually meant the file starts with that, I'd need to handle it.
-        # But standard `read` tool behavior formats output with line numbers.
-        # I will assume raw JSON.
-        pass
+    if isinstance(payload, dict) and isinstance(payload.get("data"), list):
+        return payload["data"]
 
-    with open(file_path, "r") as f:
-        data = json.load(f)
+    if isinstance(payload, list):
+        return payload
 
-    if not isinstance(data, dict) or "data" not in data:
-        print("Error: JSON structure is not as expected (missing 'data' list).")
-        exit(1)
+    raise ValueError("Unsupported JSON format. Expected { data: [...] } or [...].")
 
-    all_pricing_keys = set()
-    special_keys_found = {}  # Key -> Example Model ID
+
+def first_model_id(models, predicate):
+    for model in models:
+        if predicate(model):
+            return model.get("id", "unknown")
+    return "-"
+
+
+def summarize_schema(models):
     top_level_keys = set()
+    pricing_key_counter = Counter()
+    models_by_type = Counter()
 
-    keywords = ["web", "search", "cache", "read", "write", "image"]
+    tier_examples = {}
+    variant_examples = {}
 
-    for model in data["data"]:
-        # Top level keys
-        for k in model.keys():
-            top_level_keys.add(k)
+    tier_keys = {
+        "input_tiers",
+        "output_tiers",
+        "input_cache_read_tiers",
+        "input_cache_write_tiers",
+    }
+    variant_keys = {
+        "image_dimension_quality_pricing",
+        "video_duration_pricing",
+    }
 
-        # Pricing keys
-        if "pricing" in model:
-            p_keys = model["pricing"].keys()
-            for k in p_keys:
-                all_pricing_keys.add(k)
+    for model in models:
+        top_level_keys.update(model.keys())
+        models_by_type[model.get("type", "unknown")] += 1
 
-                # Check for keywords in pricing keys
-                for keyword in keywords:
-                    if keyword in k.lower():
-                        if k not in special_keys_found:
-                            special_keys_found[k] = model.get("id", "unknown")
+        pricing = model.get("pricing") or {}
+        if not isinstance(pricing, dict):
+            continue
 
-        # Check for keywords in top level keys too, just in case
-        for k in model.keys():
-            if k != "pricing":
-                for keyword in keywords:
-                    if keyword in k.lower():
-                        if k not in special_keys_found:
-                            special_keys_found[k] = model.get("id", "unknown")
+        for key in pricing.keys():
+            pricing_key_counter[key] += 1
 
-    print("--- Analysis Summary ---")
-    print(f"Total models scanned: {len(data['data'])}")
-    print("\n--- All Unique Pricing Keys Found ---")
-    for k in sorted(list(all_pricing_keys)):
-        print(f"- {k}")
+        for key in tier_keys:
+            if key in pricing and isinstance(pricing[key], list) and pricing[key]:
+                tier_examples.setdefault(key, model.get("id", "unknown"))
 
-    print("\n--- Relevant/Special Keys Found (Example Model) ---")
-    if special_keys_found:
-        for k, example in special_keys_found.items():
-            print(f"- {k}: (e.g., {example})")
+        for key in variant_keys:
+            if key in pricing and isinstance(pricing[key], list) and pricing[key]:
+                variant_examples.setdefault(key, model.get("id", "unknown"))
+
+    return {
+        "top_level_keys": sorted(top_level_keys),
+        "pricing_key_counter": pricing_key_counter,
+        "models_by_type": models_by_type,
+        "tier_examples": tier_examples,
+        "variant_examples": variant_examples,
+    }
+
+
+def print_report(models, summary):
+    print("--- Pricing Schema Analysis ---")
+    print(f"Total models scanned: {len(models)}")
+
+    print("\n--- Models by Type ---")
+    for model_type, count in sorted(summary["models_by_type"].items()):
+        print(f"- {model_type}: {count}")
+
+    print("\n--- Unique Pricing Keys (with model counts) ---")
+    for key, count in sorted(summary["pricing_key_counter"].items()):
+        print(f"- {key}: {count}")
+
+    print("\n--- Tiered Pricing Keys (example model) ---")
+    if summary["tier_examples"]:
+        for key, model_id in sorted(summary["tier_examples"].items()):
+            print(f"- {key}: {model_id}")
     else:
-        print(
-            "No specific keys matching 'web search', 'cache', 'read', 'write', 'image' found."
-        )
+        print("- none")
 
-    print("\n--- All Top Level Keys ---")
-    print(", ".join(sorted(list(top_level_keys))))
+    print("\n--- Variant Pricing Keys (example model) ---")
+    if summary["variant_examples"]:
+        for key, model_id in sorted(summary["variant_examples"].items()):
+            print(f"- {key}: {model_id}")
+    else:
+        print("- none")
 
-except json.JSONDecodeError as e:
-    print(f"JSON Decode Error: {e}")
-    # Fallback: print start of file to debug
-    with open(file_path, "r") as f:
-        print(f"File start: {f.read(100)}")
-except Exception as e:
-    print(f"An error occurred: {e}")
+    has_video_pricing = first_model_id(
+        models,
+        lambda m: isinstance(m.get("pricing"), dict)
+        and isinstance(m["pricing"].get("video_duration_pricing"), list)
+        and len(m["pricing"]["video_duration_pricing"]) > 0,
+    )
+    has_image_variants = first_model_id(
+        models,
+        lambda m: isinstance(m.get("pricing"), dict)
+        and isinstance(m["pricing"].get("image_dimension_quality_pricing"), list)
+        and len(m["pricing"]["image_dimension_quality_pricing"]) > 0,
+    )
+
+    print("\n--- New Schema Signals ---")
+    print(
+        f"- video_duration_pricing present: {'yes' if has_video_pricing != '-' else 'no'} ({has_video_pricing})"
+    )
+    print(
+        f"- image_dimension_quality_pricing present: {'yes' if has_image_variants != '-' else 'no'} ({has_image_variants})"
+    )
+
+    print("\n--- Top Level Keys ---")
+    print(", ".join(summary["top_level_keys"]))
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Analyze AI model pricing schema.")
+    parser.add_argument(
+        "--file",
+        default="./pricing.json",
+        help="Path to pricing JSON file (default: ./pricing.json)",
+    )
+    args = parser.parse_args()
+
+    try:
+        models = load_models(args.file)
+        summary = summarize_schema(models)
+        print_report(models, summary)
+    except json.JSONDecodeError as e:
+        print(f"JSON Decode Error: {e}")
+    except FileNotFoundError:
+        print(f"File not found: {args.file}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()
